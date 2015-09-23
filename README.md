@@ -1,1 +1,1 @@
-Instagram Tag Collection
+Instagram Tag Search
