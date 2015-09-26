@@ -1,19 +1,22 @@
 var request = require('request');
 var _ = require('lodash');
+var sprintf = require("sprintf-js").sprintf;
 
-const base_uri = 'https://api.instagram.com';
-const client_id_param = 'client_id=' + process.env.INSTAGRAM_CLIENT_ID;
+const BASE_URI = 'https://api.instagram.com';
+const CLIENT_ID_PARAM = 'client_id=' + process.env.INSTAGRAM_CLIENT_ID;
 const ERROR_MESSAGE = "Error fetching data";
+
+const TAG_ID_FROM_DATE_URL = BASE_URI + '/v1/users/992911/media/recent?max_timestamp=%s&count=1&' + CLIENT_ID_PARAM;
+const TAG_URL = BASE_URI + '/v1/tags/%s/media/recent?max_tag_id=%s&min_tag_id=%s&' + CLIENT_ID_PARAM;
 
 exports.getTagIdFromDate = function(timestamp, callback) {
 
-  const url = base_uri + '/v1/users/992911/media/recent?max_timestamp=' + timestamp +
-    '&count=1&' + client_id_param;
+  const url = sprintf(TAG_ID_FROM_DATE_URL, timestamp);
 
   request.get(url, function(error, response, body) {
     if (!error && response.statusCode == 200) {
       const json = JSON.parse(body);
-      const tagId = json.data[0].id.split('_')[0];
+      const tagId = json.pagination.next_max_id.split('_')[0];
       callback(null, tagId);
     } else {
       callback(ERROR_MESSAGE, null);
@@ -21,44 +24,41 @@ exports.getTagIdFromDate = function(timestamp, callback) {
   });
 }
 
-
 exports.getWithTagIds = function(tag, minTagId, maxTagId, callback) {
 
-  const url = base_uri + '/v1/tags/' + tag + '/media/recent?' +
-      client_id_param + '&max_tag_id=' + maxTagId + '&min_tag_id=' + minTagId;
-
+  const url = sprintf(TAG_URL, tag, maxTagId, minTagId);
   console.log(url);
 
   request.get(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const json = JSON.parse(body);
-      console.log(json);
-
       var result = {};
+
       result.data = _.map(json.data, function parseMediaData(data) {
-        var result = {};
-        result.mediaType = data.type;
-        if (result.mediaType == 'image') {
-          result.mediaURL = data.images.standard_resolution.url;
+        var instance = {};
+        instance.mediaType = data.type;
+        if (instance.mediaType == 'image') {
+          instance.mediaURL = data.images.standard_resolution.url;
         } else {
-          result.mediaURL = data.videos.standard_resolution.url;
+          instance.mediaURL = data.videos.standard_resolution.url;
         }
-        result.username = data.user.username;
-        result.instagramURL = data.link;
+        instance.username = data.user.username;
+        instance.instagramURL = data.link;
 
         if (_.contains(data.tags, tag)) {
-          result.createdTime = data.created_time;
+          instance.createdTime = data.created_time;
         } else {
           for (var i = 0; i < data.comments.count; i++) {
             if (_.contains(data.comments.data[i].text, tag)) {
-              result.createdTime = data.comments.data[i].text;
+              instance.createdTime = data.comments.data[i].text;
               break;
             }
           }
         }
-        return result;
+        return instance;
       });
-      result.nextMagTagId = json.next_max_tag_id;
+      result.maxTagId = json.pagination.next_max_tag_id;
+      result.minTagId = minTagId;
       callback(null, result);
     } else {
       callback(ERROR_MESSAGE, null);
