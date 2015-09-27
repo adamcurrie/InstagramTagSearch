@@ -2,8 +2,7 @@ import React from 'react';
 import DatePicker from './datePicker.jsx';
 import moment from 'moment';
 import _ from 'lodash';
-import Input from 'react-input-autosize';
-import { Button } from 'react-bootstrap';
+import { Button, Row, Col, Input } from 'react-bootstrap';
 
 const INSTAGRAM_MIN_DATE = moment("10-06-2010", "MM-DD-YYYY");
 
@@ -47,16 +46,17 @@ class Search extends React.Component {
         });
     }
 
-    updateTag(event) {
+    updateTag() {
+        console.log(this.refs.input.getValue());
         this.setState({
-            tag: event.target.value
+            tag: this.refs.input.getValue()
         });
     }
 
     onButtonClick(event) {
         if (this.state.startDateValue && this.state.endDateValue && this.state.tag.trim().length != 0) {
             this.props.onSearch({
-                tag: this.state.tag,
+                tag: this.state.tag.replace('#', ''),
                 startDate: this.state.startDateValue.format('MM-DD-YYYY'),
                 endDate: this.state.endDateValue.format('MM-DD-YYYY')
             });
@@ -66,13 +66,49 @@ class Search extends React.Component {
     render() {
         return (
             <div>
-                <h2>Search</h2>
-                <Input placeholder="Instagram Tag" name="tag" value={this.state.tag} onChange={this.updateTag.bind(this)}
-                       style={{ background: '#eee', borderRadius: 5, padding: 5 }}
-                       inputStyle={{ border: '1px solid #999', borderRadius: 3, padding: 3, fontSize: 14 }}/>
-                <DatePicker date={this.state.startDateValue} dates={this.state.startDate} updateDate={this.updateStartDate.bind(this)}/>
-                <DatePicker date={this.state.endDateValue} dates={this.state.endDate} updateDate={this.updateEndDate.bind(this)}/>
-                <Button bsStyle="success" bsSize="small" onClick={this.onButtonClick.bind(this)}>Search</Button>
+                <Row>
+                    <Col xs={0} md={4}><code></code></Col>
+                    <Col xs={12} md={4}>
+                        <code>
+                            <h2>Search</h2>
+                        </code>
+                    </Col>
+                    <Col xs={0} md={4}><code></code></Col>
+                </Row>
+                <Row>
+                    <Col xs={12} md={4}>
+                        <code>
+                            <Input
+                                type="text"
+                                value={this.state.tag}
+                                placeholder="#hashtag"
+                                ref="input"
+                                groupClassName="group-class"
+                                labelClassName="label-class"
+                                onChange={this.updateTag.bind(this)} />
+
+                        </code>
+                    </Col>
+                    <Col xs={12} md={4}>
+                        <code>
+                            <DatePicker date={this.state.startDateValue} dates={this.state.startDate} updateDate={this.updateStartDate.bind(this)}/>
+                        </code>
+                    </Col>
+                    <Col xs={12} md={4}>
+                        <code>
+                            <DatePicker date={this.state.endDateValue} dates={this.state.endDate} updateDate={this.updateEndDate.bind(this)}/>
+                        </code>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={0} md={5}><code></code></Col>
+                    <Col xs={12} md={2}>
+                        <code>
+                            <Button bsStyle="success" bsSize="large" onClick={this.onButtonClick.bind(this)}>Search</Button>
+                        </code>
+                    </Col>
+                    <Col xs={0} md={5}><code></code></Col>
+                </Row>
             </div>
         );
     }

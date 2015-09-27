@@ -37,8 +37,8 @@ exports.getWithTagIds = function(tag, minTagId, maxTagId, callback) {
       result.data = _.map(json.data, function(data) {
         const hashtag = '#' + tag.toLowerCase();
         var instance = {};
-        instance.mediaType = data.type;
-        if (instance.mediaType == 'image') {
+        instance.media_type = data.type;
+        if (instance.media_type == 'image') {
           instance.media_url = data.images.standard_resolution.url;
         } else {
           instance.media_url = data.videos.standard_resolution.url;

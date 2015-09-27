@@ -20,7 +20,7 @@ exports.create = function(tagId, dataList, callback, txn) {
     dataList.forEach(function(data) {
       params.push(tagId);
       params.push(data.createdTime);
-      params.push(data.mediaType);
+      params.push(data.media_type);
       params.push(data.media_url);
       params.push(data.instagram_url);
       params.push(data.username);

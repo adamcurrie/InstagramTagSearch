@@ -25,12 +25,13 @@ router.get('/tagsearch/:tag', function(req, res) {
   const endDateUnix = endDate.unix();
   const offset = parseInt(req.query.offset, 10);
   const queryOffset = _.isFinite(offset) && offset > 0 ? offset : 0;
+  const parsedTag = req.params.tag;
 
-  Tags.get(req.params.tag, startDateUnix, endDateUnix, function(tagsError, tagData) {
+  Tags.get(parsedTag, startDateUnix, endDateUnix, function(tagsError, tagData) {
     if (tagsError) {
       return res.status(400).send(ERROR_MESSAGE);
     } else if (tagData == null) {
-      getNewInstagramMedia(startDateUnix, endDateUnix, req.params.tag, function(err, results) {
+      getNewInstagramMedia(startDateUnix, endDateUnix, parsedTag, function(err, results) {
         if (err) {
           return res.send(ERROR_MESSAGE);
         } else {
@@ -42,7 +43,7 @@ router.get('/tagsearch/:tag', function(req, res) {
         if (mediaError) {
           return res.status(400).send(ERROR_MESSAGE);
         } else if (mediaList.length == 0){
-          getMoreInstagramMedia(req.params.tag, tagData.id, tagData.min_tag_id, tagData.max_tag_id, function(err, results) {
+          getMoreInstagramMedia(parsedTag, tagData.id, tagData.min_tag_id, tagData.max_tag_id, function(err, results) {
             if (err) {
               return res.send(ERROR_MESSAGE);
             } else {

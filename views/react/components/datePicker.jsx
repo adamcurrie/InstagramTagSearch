@@ -44,7 +44,7 @@ class DatePicker extends React.Component {
   render() {
     return (
       <div>
-        <input readOnly placeholder="Date" styles={{marginRight: '1em', lineHeight: '27px',}} type="text" ref="datePick" size="10" value={this.state.date}/>
+        <input readOnly placeholder="Date" className={"form-control"} type="text" ref="datePick" value={this.state.date}/>
       </div>
     );
   }

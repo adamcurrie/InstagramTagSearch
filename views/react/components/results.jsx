@@ -1,18 +1,10 @@
 import React from 'react/addons';
 import $ from 'jquery';
 import _ from 'lodash';
-import { Button } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
+import { Card, CardActions, CardHeader, CardMedia,
+    CardTitle, FlatButton } from 'material-ui';
 let sprintf = require('sprintf-js').sprintf;
-let mui = require('material-ui');
-let {
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    CardTitle,
-    FlatButton
-    } = mui;
-
 
 const BASE_URL = 'http://localhost:3000/api/tagsearch/%s?startDate=%s&endDate=%s&offset=%d';
 
@@ -26,7 +18,7 @@ const BASE_URL = 'http://localhost:3000/api/tagsearch/%s?startDate=%s&endDate=%s
  */
 function buildImageCard(username, mediaURL, instagramURL, tag) {
     return (
-        <Card>
+        <Card key={mediaURL}>
             <CardHeader
                 title={tag}
                 subtitle={username}/>
@@ -81,6 +73,7 @@ class Results extends React.Component {
 
     componentWillMount() {
         const url = sprintf(BASE_URL, this.props.data.tag, this.props.data.startDate, this.props.data.endDate, 0);
+        console.log(url);
         $.get(url, (results) => {
            this.setState((previousState, currentProps) => {
                return {
@@ -106,14 +99,23 @@ class Results extends React.Component {
         return (
             <div>
                 {_.map(this.state.data, (result) => {
-                    if (result.mediaType == 'image') {
+                    if (result.media_type == 'image') {
                         return buildImageCard(result.username, result.media_url, result.instagram_url, this.props.data.tag);
                     } else {
                         return buildVideoCard(result.username, result.media_url, result.instagram_url, this.props.data.tag);
                     }
                 })}
-                <Button bsStyle="success" bsSize="small" onClick={this.onButtonClick.bind(this)}>Load More</Button>
-                </div>
+                <br />
+                <Row>
+                    <Col xs={0} md={5}><code></code></Col>
+                    <Col xs={12} md={2}>
+                        <code>
+                            <Button bsStyle="primary" bsSize="large" onClick={this.onButtonClick.bind(this)}>Load More</Button>
+                        </code>
+                    </Col>
+                    <Col xs={0} md={5}><code></code></Col>
+                </Row>
+            </div>
         );
     }
 }
