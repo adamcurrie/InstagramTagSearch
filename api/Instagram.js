@@ -35,22 +35,23 @@ exports.getWithTagIds = function(tag, minTagId, maxTagId, callback) {
       var result = {};
 
       result.data = _.map(json.data, function parseMediaData(data) {
+        const hashtag = '#' + tag.toLowerCase();
         var instance = {};
         instance.mediaType = data.type;
         if (instance.mediaType == 'image') {
-          instance.mediaURL = data.images.standard_resolution.url;
+          instance.media_url = data.images.standard_resolution.url;
         } else {
-          instance.mediaURL = data.videos.standard_resolution.url;
+          instance.media_url = data.videos.standard_resolution.url;
         }
         instance.username = data.user.username;
-        instance.instagramURL = data.link;
+        instance.instagram_url = data.link;
 
-        if (_.contains(data.tags, tag)) {
-          instance.createdTime = data.created_time;
+        if (data.caption.text.toLowerCase().indexOf(hashtag) != -1) {
+          instance.createdTime = data.caption.created_time;
         } else {
-          for (var i = 0; i < data.comments.count; i++) {
-            if (_.contains(data.comments.data[i].text, tag)) {
-              instance.createdTime = data.comments.data[i].text;
+          for (var i = 0; i < data.comments.data.length; i++) {
+            if (data.comments.data[i].text.toLowerCase().indexOf(hashtag) != -1) {
+              instance.createdTime = data.comments.data[i].created_time;
               break;
             }
           }

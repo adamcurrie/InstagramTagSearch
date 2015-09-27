@@ -21,8 +21,8 @@ exports.create = function(tagId, dataList, callback, txn) {
       params.push(tagId);
       params.push(data.createdTime);
       params.push(data.mediaType);
-      params.push(data.mediaURL);
-      params.push(data.instagramURL);
+      params.push(data.media_url);
+      params.push(data.instagram_url);
       params.push(data.username);
     });
 
