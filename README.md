@@ -14,7 +14,7 @@ grunt
 env DATABASE_URL=<Postgres Connection URL> INSTAGRAM_CLIENT_ID=<Instagram Client ID> ./bin/www
 
 ```
-*** Example Postgres Connection URL:
+### Example Postgres Connection URL:
 ```
 postgres://Adam@localhost:5432/Instagram
 ```
