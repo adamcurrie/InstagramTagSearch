@@ -34,7 +34,7 @@ exports.getWithTagIds = function(tag, minTagId, maxTagId, callback) {
       const json = JSON.parse(body);
       var result = {};
 
-      result.data = _.map(json.data, function parseMediaData(data) {
+      result.data = _.map(json.data, function(data) {
         const hashtag = '#' + tag.toLowerCase();
         var instance = {};
         instance.mediaType = data.type;
@@ -56,7 +56,13 @@ exports.getWithTagIds = function(tag, minTagId, maxTagId, callback) {
             }
           }
         }
-        return instance;
+        if (instance.createdTime) {
+          return instance;
+        } else {
+          return null;
+        }
+      }).filter(function(instance) {
+        return instance != null;
       });
       result.maxTagId = json.pagination.next_max_tag_id;
       result.minTagId = minTagId;

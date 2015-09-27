@@ -1,58 +1,77 @@
-import React from 'react';
+import React from 'react/addons';
 import $ from 'jquery';
-var sprintf = require('sprintf-js').sprintf;
 import _ from 'lodash';
+import { Button } from 'react-bootstrap';
+let sprintf = require('sprintf-js').sprintf;
 let mui = require('material-ui');
 let {
-    Avatar,
     Card,
     CardActions,
-    CardExpandable,
     CardHeader,
     CardMedia,
-    CardText,
     CardTitle,
     FlatButton
     } = mui;
 
+
 const BASE_URL = 'http://localhost:3000/api/tagsearch/%s?startDate=%s&endDate=%s&offset=%d';
 
-function buildImageCard(data, tag) {
-    console.log(data);
+/**
+ * Creates a Material-UI Card for the given Instagram image
+ * @param username
+ * @param mediaURL
+ * @param instagramURL
+ * @param tag
+ * @returns Card
+ */
+function buildImageCard(username, mediaURL, instagramURL, tag) {
     return (
         <Card>
             <CardHeader
                 title={tag}
-                subtitle={data.username}/>
-            <CardMedia overlay={<CardTitle title={tag} subtitle={data.username}/>}>
-                <img src={data.media_url}/>
+                subtitle={username}/>
+            <CardMedia overlay={<CardTitle title={tag} subtitle={username}/>}>
+                <img src={mediaURL}/>
             </CardMedia>
             <CardActions>
-                <FlatButton linkButton={true} href={data.instagram_url} label="View on Instagram"/>
+                <FlatButton linkButton={true} href={instagramURL} label="View on Instagram"/>
             </CardActions>
         </Card>
     );
 }
 
-function buildVideoCard(data, tag) {
-    console.log(data);
+/**
+ * Creates a Material-UI Card for the given Instagram video
+ * @param username
+ * @param mediaURL
+ * @param instagramURL
+ * @param tag
+ * @returns {XML}
+ */
+function buildVideoCard(username, mediaURL, instagramURL, tag) {
     return (
-        <Card key={data.media_url}>
+        <Card key={mediaURL}>
             <CardHeader
                 title={tag}
-                subtitle={data.username}/>
+                subtitle={username}/>
             <CardMedia>
-                <video src={data.media_url} width="640" height="480" controls>
+                <video src={mediaURL} width="640" height="480" controls>
                     Your browser does not support the <code>video</code> element.
                 </video>
             </CardMedia>
             <CardActions>
-                <FlatButton linkButton={true} href={data.instagram_url} label="View on Instagram"/>
+                <FlatButton linkButton={true} href={instagramURL} label="View on Instagram"/>
             </CardActions>
         </Card>
     );
 }
 
+/**
+ * Required Props
+ * tag: (string)
+ * startDate: (string)
+ * endDate: (string)
+ */
 class Results extends React.Component {
 
     constructor(props) {
@@ -63,7 +82,7 @@ class Results extends React.Component {
     componentWillMount() {
         const url = sprintf(BASE_URL, this.props.data.tag, this.props.data.startDate, this.props.data.endDate, 0);
         $.get(url, (results) => {
-           this.setState(function(previousState, currentProps) {
+           this.setState((previousState, currentProps) => {
                return {
                    data: results,
                    offset: previousState.offset + results.length
@@ -72,16 +91,29 @@ class Results extends React.Component {
         });
     }
 
+    onButtonClick(event) {
+        const url = sprintf(BASE_URL, this.props.data.tag, this.props.data.startDate, this.props.data.endDate, this.state.offset);
+        $.get(url, (results) => {
+            var newState = React.addons.update(this.state, {
+                data: {$push: results},
+                offset: {$set: this.state.offset + results.length}
+            });
+            this.setState(newState);
+        });
+    }
+
     render() {
         return (
             <div>
                 {_.map(this.state.data, (result) => {
                     if (result.mediaType == 'image') {
-                        return buildImageCard(result, this.props.data.tag);
+                        return buildImageCard(result.username, result.media_url, result.instagram_url, this.props.data.tag);
                     } else {
-                        return buildVideoCard(result, this.props.data.tag);
+                        return buildVideoCard(result.username, result.media_url, result.instagram_url, this.props.data.tag);
                     }
-                })}</div>
+                })}
+                <Button bsStyle="success" bsSize="small" onClick={this.onButtonClick.bind(this)}>Load More</Button>
+                </div>
         );
     }
 }

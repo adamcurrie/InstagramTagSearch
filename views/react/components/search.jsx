@@ -7,6 +7,10 @@ import { Button } from 'react-bootstrap';
 
 const INSTAGRAM_MIN_DATE = moment("10-06-2010", "MM-DD-YYYY");
 
+/**
+ * Required Props
+ * onSearch: (function) function called after all input fields are filled in
+ */
 class Search extends React.Component {
 
     componentWillMount() {
@@ -51,7 +55,6 @@ class Search extends React.Component {
 
     onButtonClick(event) {
         if (this.state.startDateValue && this.state.endDateValue && this.state.tag.trim().length != 0) {
-            console.log('ok');
             this.props.onSearch({
                 tag: this.state.tag,
                 startDate: this.state.startDateValue.format('MM-DD-YYYY'),

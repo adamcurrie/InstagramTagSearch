@@ -24,7 +24,7 @@ router.get('/tagsearch/:tag', function(req, res) {
   const startDateUnix = startDate.unix();
   const endDateUnix = endDate.unix();
   const offset = parseInt(req.query.offset, 10);
-  const queryOffset = _.isFinite(offset) && offset > 0 && offset % 20 == 0 ? offset : 0;
+  const queryOffset = _.isFinite(offset) && offset > 0 ? offset : 0;
 
   Tags.get(req.params.tag, startDateUnix, endDateUnix, function(tagsError, tagData) {
     if (tagsError) {

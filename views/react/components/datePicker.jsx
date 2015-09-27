@@ -4,10 +4,12 @@ import moment from 'moment';
 var StyleSheet = require('react-style');
 require('jquery-ui');
 
-/*
- * Required props:
- * maxDate: maxDate
- * updateDate(dateString): methods to call to update the values of the enclosing object
+/**
+ * Required Props
+ * minDate: (moment) Minimum date that can be selected
+ * maxDate: (moment) Maximum date that can be selected
+ * updateDate: (function) Function that is called when date is selected
+ * date: (moment) Selected date
  */
 class DatePicker extends React.Component {
 
