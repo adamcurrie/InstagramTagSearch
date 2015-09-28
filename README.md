@@ -12,9 +12,10 @@ npm install
 npm install -g grunt-cli
 grunt
 env DATABASE_URL=<Postgres Connection URL> INSTAGRAM_CLIENT_ID=<Instagram Client ID> ./bin/www
-
 ```
 ### Example Postgres Connection URL:
 ```
 postgres://Adam@localhost:5432/Instagram
 ```
+Web page can be accessed by visiting
+[http://localhost:3000](http://localhost:3000)
