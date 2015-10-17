@@ -29,11 +29,11 @@ router.get('/tagsearch/:tag', function(req, res) {
 
   Tags.get(parsedTag, startDateUnix, endDateUnix, function(tagsError, tagData) {
     if (tagsError) {
-      return res.status(400).send(ERROR_MESSAGE);
+      return res.status(500).send(ERROR_MESSAGE);
     } else if (tagData == null) {
       getNewInstagramMedia(startDateUnix, endDateUnix, parsedTag, function(err, results) {
         if (err) {
-          return res.send(ERROR_MESSAGE);
+          return res.status(500).send(ERROR_MESSAGE);
         } else {
           return res.send(results);
         }
@@ -41,11 +41,11 @@ router.get('/tagsearch/:tag', function(req, res) {
     } else {
       Media.get(tagData.id, QUERY_LIMIT, queryOffset, function(mediaError, mediaList) {
         if (mediaError) {
-          return res.status(400).send(ERROR_MESSAGE);
+          return res.status(500).send(ERROR_MESSAGE);
         } else if (mediaList.length == 0){
           getMoreInstagramMedia(parsedTag, tagData.id, tagData.min_tag_id, tagData.max_tag_id, function(err, results) {
             if (err) {
-              return res.send(ERROR_MESSAGE);
+              return res.status(500).send(ERROR_MESSAGE);
             } else {
               return res.send(results);
             }
